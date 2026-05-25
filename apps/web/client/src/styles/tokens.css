@@ -1,0 +1,108 @@
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  /* surfaces */
+  --bg-0:   #1a0826;
+  --bg-1:   #2a0e3a;
+  --bg-2:   #3a1850;
+  --bg-grad:
+    radial-gradient(ellipse at 18% 12%, rgba(255,180,220,0.22) 0%, transparent 55%),
+    radial-gradient(ellipse at 82% 22%, rgba(202,166,255,0.18) 0%, transparent 55%),
+    radial-gradient(ellipse at 78% 88%, rgba(255,143,192,0.16) 0%, transparent 55%),
+    radial-gradient(ellipse at 22% 78%, rgba(168,243,208,0.06) 0%, transparent 55%),
+    linear-gradient(170deg, #1a0826 0%, #2a0e3a 60%, #3a1850 100%);
+
+  /* accents */
+  --lilac:       #caa6ff;
+  --pink:        #ff5ea7;
+  --bubblegum:   #ffc1dc;
+  --butter:      #ffe082;
+  --mint:        #a8f3d0;
+  --baby-blue:   #b8d4ff;
+  --amber:       #ffb84d;
+  --danger:      #ff7a8d;
+
+  /* text */
+  --cream:       #fff7f0;
+  --ink:         #fde9ff;
+  --ink-dim:     rgba(253,233,255,0.7);
+  --ink-faint:   rgba(253,233,255,0.42);
+
+  /* card */
+  --card-bg: linear-gradient(155deg,
+                rgba(255,255,255,0.12) 0%,
+                rgba(255,193,220,0.08) 30%,
+                rgba(202,166,255,0.08) 60%,
+                rgba(255,224,130,0.06) 100%);
+  --card-border: rgba(255,193,220,0.28);
+  --card-glow:
+    0 0 0 1px rgba(255,193,220,0.14) inset,
+    0 24px 50px -36px rgba(255,94,167,0.55),
+    0 0 30px -10px rgba(202,166,255,0.4);
+
+  /* fonts */
+  --f-display: 'Unbounded', 'Sora', system-ui, sans-serif;
+  --f-ui:      'Space Grotesk', system-ui, sans-serif;
+  --f-mono:    'JetBrains Mono', ui-monospace, monospace;
+
+  --header-h: 38px;
+  --sidebar-w: 280px;
+}
+
+/* Light theme: conservative auto-derived palette. Accents stay identical
+   so the brand reads the same; surfaces flip to pearl/lavender and text
+   inverts to dark purple. Card overlays use darker rgba so they still
+   read on a light backdrop. Tune by hand once a design pass happens. */
+[data-theme="light"] {
+  --bg-0: #faf3f7;
+  --bg-1: #f0e4ee;
+  --bg-2: #e4d3e8;
+  --bg-grad:
+    radial-gradient(ellipse at 18% 12%, rgba(255,180,220,0.32) 0%, transparent 55%),
+    radial-gradient(ellipse at 82% 22%, rgba(202,166,255,0.26) 0%, transparent 55%),
+    radial-gradient(ellipse at 78% 88%, rgba(255,143,192,0.22) 0%, transparent 55%),
+    radial-gradient(ellipse at 22% 78%, rgba(168,243,208,0.14) 0%, transparent 55%),
+    linear-gradient(170deg, #faf3f7 0%, #f0e4ee 60%, #e4d3e8 100%);
+
+  --cream:     #2a0e3a;
+  --ink:       #3a1850;
+  --ink-dim:   rgba(58,24,80,0.72);
+  --ink-faint: rgba(58,24,80,0.50);
+
+  --card-bg: linear-gradient(155deg,
+                rgba(58,24,80,0.05) 0%,
+                rgba(255,94,167,0.04) 30%,
+                rgba(202,166,255,0.05) 60%,
+                rgba(255,184,77,0.04) 100%);
+  --card-border: rgba(255,94,167,0.32);
+  --card-glow:
+    0 0 0 1px rgba(255,94,167,0.10) inset,
+    0 24px 50px -36px rgba(255,94,167,0.30),
+    0 0 30px -10px rgba(202,166,255,0.22);
+}
+
+@media (min-width: 1440px) {
+  :root { --header-h: 42px; }
+}
+
+html, body {
+  background: var(--bg-0);
+  color: var(--ink);
+  font-family: var(--f-ui);
+  height: 100%;
+  overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+#root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-grad);
+  position: relative;
+  overflow: hidden;
+}

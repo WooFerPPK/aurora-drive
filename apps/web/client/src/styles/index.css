@@ -1,0 +1,1275 @@
+/* ------------ app shell ------------ */
+/* `.app` + `.app-main` visual properties migrated to Tailwind utilities
+   on the App.tsx root. `.app` and `.header-toggle` class names retained
+   purely as markers so the state-driven `.app.app-header-hidden …`
+   rules below still match. Visual styling for `.header-toggle` itself
+   is Tailwind utilities in HeaderToggle.tsx. */
+
+/* Header collapse — animated by transitioning the height on .header
+   to 0. */
+.app.app-header-hidden .header {
+  height: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+  opacity: 0;
+  pointer-events: none;
+  border-bottom-color: transparent;
+}
+
+/* Pull-tab state. When the header collapses, the tab rides up and its
+   chevron flips. */
+.app.app-header-hidden .header-toggle {
+  top: 0;
+}
+.app.app-header-hidden .header-toggle svg {
+  transform: rotate(180deg);
+}
+
+/* Non-widget pages (Sessions / Coach / Settings) are scrollable
+   padded surfaces. Widget surfaces own their own positioning and
+   live below. */
+.surface {
+  flex: 1;
+  overflow: auto;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* ------------ header ------------ */
+/* `.header` visual properties migrated to Tailwind utilities on the
+   <header> element in AppHeader.tsx. The class name is retained there
+   purely as a structural marker for the `.app.app-header-hidden .header`
+   collapse rule below. `.header-left` was unused. */
+
+/* ------------ replay scrubber (bottom-of-shell timeline) ------------
+   Outer shell, play button, and time/track containers migrated to
+   Tailwind utilities in ReplayScrubber.tsx. The vendor-pseudo-element
+   slider skin below (track / progress / thumb for both webkit + moz)
+   is left here because Tailwind doesn't expose `::-webkit-slider-*`
+   or `::-moz-range-*` modifiers. The `.replay-track` className is kept
+   on the wrapper as a structural marker so these selectors still match. */
+
+.replay-track input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 28px;
+  background: transparent;
+  margin: 0;
+  cursor: pointer;
+  outline: none;
+}
+
+.replay-track input[type="range"]::-webkit-slider-runnable-track {
+  height: 4px;
+  border-radius: 2px;
+  background:
+    linear-gradient(90deg, var(--pink), var(--lilac)) 0 0 / var(--pct, 0%) 100% no-repeat,
+    rgba(255, 193, 220, 0.18);
+  box-shadow: 0 0 8px -2px rgba(255, 94, 167, 0.35);
+}
+.replay-track input[type="range"]::-moz-range-track {
+  height: 4px;
+  border-radius: 2px;
+  background: rgba(255, 193, 220, 0.18);
+}
+.replay-track input[type="range"]::-moz-range-progress {
+  height: 4px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, var(--pink), var(--lilac));
+}
+
+.replay-track input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  margin-top: -6px;
+  border-radius: 50%;
+  background: var(--cream);
+  border: 2px solid var(--pink);
+  box-shadow:
+    0 0 12px rgba(255, 94, 167, 0.85),
+    0 0 4px rgba(255, 94, 167, 0.6);
+  cursor: grab;
+  transition: transform 0.1s ease;
+}
+.replay-track input[type="range"]:active::-webkit-slider-thumb { cursor: grabbing; transform: scale(1.12); }
+.replay-track input[type="range"]:hover::-webkit-slider-thumb { transform: scale(1.12); }
+
+.replay-track input[type="range"]::-moz-range-thumb {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: var(--cream);
+  border: 2px solid var(--pink);
+  box-shadow:
+    0 0 12px rgba(255, 94, 167, 0.85),
+    0 0 4px rgba(255, 94, 167, 0.6);
+  cursor: grab;
+}
+
+/* Header panels (Garage + Sessions): shared pill/dropdown/mini-button
+   chrome lives in panelStyles.ts; per-panel content classes (.car-card*,
+   .session-row*, .session-kind, etc.) are inlined as Tailwind utilities
+   on the GaragePanel and SessionsPanel JSX. */
+
+/* ------------ surfaces ------------ */
+
+.surface-empty .empty-blurb {
+  color: var(--ink-dim);
+  font-size: 13px;
+  line-height: 1.5;
+  margin-bottom: 12px;
+}
+.surface-empty .empty-actions {
+  display: flex; gap: 8px;
+  margin-bottom: 10px;
+}
+.empty-debug summary {
+  cursor: pointer;
+  color: var(--ink-faint);
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  padding: 6px 0;
+}
+.empty-debug pre {
+  background: rgba(0,0,0,0.25);
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 6px;
+  padding: 8px;
+  font-size: 11px;
+  font-family: var(--f-mono);
+  color: var(--ink-dim);
+  overflow: auto;
+}
+
+/* ------------ buttons + forms ------------ */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: 8px;
+  border: 1px solid rgba(255,193,220,0.3);
+  background: rgba(255,255,255,0.05);
+  color: var(--cream);
+  font-family: var(--f-display);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 120ms ease, border-color 120ms ease, transform 80ms ease;
+}
+.btn:hover:not(:disabled) {
+  background: rgba(255,193,220,0.14);
+  border-color: rgba(255,193,220,0.5);
+}
+.btn:active:not(:disabled) { transform: translateY(1px); }
+.btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.btn.small { padding: 4px 8px; font-size: 10px; }
+.btn.primary {
+  background: linear-gradient(135deg, rgba(255,94,167,0.4), rgba(202,166,255,0.35));
+  border-color: rgba(255,193,220,0.6);
+}
+.btn.ghost { background: transparent; }
+.btn.danger {
+  color: #fff;
+  background: rgba(255,94,167,0.2);
+  border-color: rgba(255,94,167,0.6);
+}
+.btn.danger:hover:not(:disabled) {
+  background: rgba(255,94,167,0.35);
+  border-color: rgba(255,94,167,0.85);
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-family: var(--f-mono);
+  font-size: 11px;
+  color: var(--ink-dim);
+}
+.field > span {
+  font-family: var(--f-display);
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+}
+.field input[type="text"],
+.field input[type="number"],
+.field select {
+  background: rgba(0,0,0,0.25);
+  border: 1px solid rgba(255,193,220,0.25);
+  color: var(--cream);
+  border-radius: 6px;
+  padding: 6px 10px;
+  font-family: var(--f-mono);
+  font-size: 12px;
+  outline: none;
+  width: 100%;
+}
+.field input:focus, .field select:focus {
+  border-color: rgba(255,94,167,0.6);
+  box-shadow: 0 0 0 2px rgba(255,94,167,0.18);
+}
+.field.check {
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+}
+.field.check input { accent-color: var(--pink); }
+
+.field-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px 16px;
+}
+
+.settings-toolbar {
+  display: flex;
+  gap: 8px;
+}
+
+/* ------------ table ------------ */
+
+.sessions-toolbar { display: flex; gap: 10px; align-items: flex-end; margin-bottom: 10px; }
+.sessions-toolbar .field { min-width: 160px; }
+
+.table-wrap {
+  overflow-x: auto;
+  border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 8px;
+}
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--f-mono);
+  font-size: 12px;
+}
+.data-table th, .data-table td {
+  padding: 8px 12px;
+  text-align: left;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+.data-table th {
+  font-family: var(--f-display);
+  font-size: 9px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--bubblegum);
+  background: rgba(0,0,0,0.2);
+}
+.data-table tbody tr:hover { background: rgba(255,193,220,0.06); }
+.data-table tr.row-selected { background: rgba(255,94,167,0.12); }
+.row-actions { display: flex; gap: 6px; justify-content: flex-end; }
+
+/* ------------ misc ------------ */
+
+.muted { color: var(--ink-faint); font-size: 13px; padding: 8px 0; }
+.muted.danger { color: var(--danger); }
+
+.kv-block {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 4px 14px;
+  font-family: var(--f-mono);
+  font-size: 12px;
+  color: var(--ink);
+}
+.kv-block .kv-k {
+  font-family: var(--f-display);
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+
+.catalog-grid {
+  list-style: none;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 10px;
+}
+.catalog-item {
+  border: 1px solid rgba(255,193,220,0.2);
+  background: rgba(255,255,255,0.03);
+  border-radius: 10px;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.catalog-kind {
+  font-family: var(--f-mono);
+  font-size: 10px;
+  color: var(--lilac);
+  letter-spacing: 0.12em;
+}
+.catalog-title {
+  font-family: var(--f-display);
+  font-size: 13px;
+  color: var(--cream);
+}
+.catalog-size {
+  font-family: var(--f-mono);
+  font-size: 10px;
+  color: var(--ink-faint);
+}
+
+.car-list { list-style: none; display: flex; flex-direction: column; gap: 6px; }
+.car-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 10px;
+  border: 1px solid rgba(255,255,255,0.05);
+  border-radius: 8px;
+  background: rgba(255,255,255,0.02);
+}
+.car-row-main { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.car-row-name { font-family: var(--f-display); font-size: 13px; color: var(--cream); }
+.car-row-meta { font-family: var(--f-mono); font-size: 11px; color: var(--ink-faint); }
+
+.callout-list { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+.callout {
+  border: 1px solid rgba(255,193,220,0.18);
+  background: rgba(255,255,255,0.03);
+  border-radius: 8px;
+  padding: 8px 10px;
+}
+.callout-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-family: var(--f-mono);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  color: var(--ink-faint);
+  margin-bottom: 2px;
+}
+.callout-priority { color: var(--bubblegum); }
+.callout-warn .callout-priority { color: var(--danger); }
+.callout-tip  .callout-priority { color: var(--butter); }
+.callout-text { font-family: var(--f-ui); font-size: 13px; color: var(--ink); }
+
+/* ------------ settings page (two-column with viewport-bottom save bar) ------------ */
+
+.settings-page {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 220px minmax(0, 1fr);
+  grid-template-rows: minmax(0, 1fr) auto;
+  gap: 0;
+}
+.settings-nav     { grid-row: 1; grid-column: 1; }
+.settings-content { grid-row: 1; grid-column: 2; }
+.settings-savebar { grid-row: 2; grid-column: 1 / -1; }
+
+@media (max-width: 880px) {
+  .settings-page { grid-template-columns: minmax(0, 1fr); }
+  .settings-nav  { display: none; }
+  .settings-savebar { grid-column: 1; }
+}
+
+.settings-nav {
+  padding: 22px 14px 22px 22px;
+  border-right: 1px solid rgba(255,193,220,0.12);
+  overflow-y: auto;
+}
+.settings-nav-title {
+  font-family: var(--f-display);
+  font-size: 12px;
+  letter-spacing: 0.28em;
+  color: var(--bubblegum);
+  text-transform: uppercase;
+  margin-bottom: 14px;
+  padding-left: 12px;
+}
+.settings-nav-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.settings-nav-item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  width: 100%;
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--ink-dim);
+  font-family: var(--f-display);
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  padding: 10px 12px;
+  border-radius: 10px;
+  cursor: pointer;
+  text-align: left;
+  transition: background 120ms ease, color 120ms ease, border-color 120ms ease;
+}
+.settings-nav-item:hover {
+  background: rgba(255,193,220,0.06);
+  color: var(--cream);
+}
+.settings-nav-item.active {
+  background: linear-gradient(135deg, rgba(255,94,167,0.22), rgba(202,166,255,0.18));
+  border-color: rgba(255,193,220,0.45);
+  color: var(--cream);
+  box-shadow: 0 0 22px -10px rgba(255,94,167,0.6);
+}
+.settings-nav-item.danger { color: #ffafd1; }
+.settings-nav-item.danger.active {
+  background: rgba(255,94,167,0.2);
+  border-color: rgba(255,94,167,0.55);
+  color: #fff;
+}
+.settings-nav-hint {
+  font-family: var(--f-mono);
+  font-size: 9px;
+  letter-spacing: 0.08em;
+  color: var(--ink-faint);
+  text-transform: none;
+  font-weight: normal;
+}
+
+.settings-content {
+  overflow-y: auto;
+  padding: 0 26px 26px;
+  scroll-behavior: smooth;
+}
+/* Constrain section content on wide viewports so the field grid
+   doesn't sprawl into 5 columns and rows of toggles don't strand
+   themselves miles to the right of the labels. The wrapper element
+   takes the column; section content centres inside it. */
+.settings-section {
+  max-width: 860px;
+}
+.settings-section-head,
+.settings-field-grid,
+.settings-toggle-list,
+.settings-danger-row,
+.settings-car-list,
+.settings-empty {
+  max-width: 860px;
+}
+
+/* Save bar — its own grid row spanning the full page width at the
+   bottom of the viewport. Always visible; states (clean / dirty)
+   change colour so the user can glance at it from any section. */
+.settings-savebar {
+  z-index: 50;
+  border-top: 1px solid rgba(255,193,220,0.14);
+  background: linear-gradient(180deg,
+    rgba(26,8,38,0.72) 0%,
+    rgba(26,8,38,0.94) 100%);
+  backdrop-filter: blur(12px) saturate(140%);
+  -webkit-backdrop-filter: blur(12px) saturate(140%);
+  transition: border-color 200ms ease, background 200ms ease, box-shadow 200ms ease;
+}
+.settings-savebar.dirty {
+  border-top-color: rgba(255,184,77,0.55);
+  background: linear-gradient(180deg,
+    rgba(58,24,80,0.72) 0%,
+    rgba(58,24,80,0.96) 100%);
+  box-shadow: 0 -16px 32px -16px rgba(255,94,167,0.35);
+}
+/* Status indents under the nav column so it lines up with section
+   labels above; the action buttons hit the right edge of the page. */
+.settings-savebar-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 14px 26px 14px calc(220px + 26px);
+}
+@media (max-width: 880px) {
+  .settings-savebar-inner { padding: 14px 26px; }
+}
+.settings-savebar-status {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--f-mono);
+  font-size: 11px;
+  color: var(--ink-dim);
+  letter-spacing: 0.06em;
+}
+.settings-savebar-status .dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.settings-savebar-status .dot.clean {
+  background: var(--mint);
+  box-shadow: 0 0 8px var(--mint);
+}
+.settings-savebar-status .dot.dirty {
+  background: var(--butter);
+  box-shadow: 0 0 10px var(--butter);
+  animation: pulse 1.6s ease-in-out infinite;
+}
+.settings-savebar-actions {
+  display: flex;
+  gap: 8px;
+}
+
+/* Sections */
+.settings-section {
+  padding: 22px 0 26px;
+  border-bottom: 1px solid rgba(255,193,220,0.08);
+  scroll-margin-top: 70px;
+}
+.settings-section:last-of-type { border-bottom: none; }
+.settings-section-danger { /* visual cue — head colour does the work */ }
+
+.settings-section-head { margin-bottom: 18px; }
+.settings-section-title {
+  font-family: var(--f-display);
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--cream);
+  margin: 0 0 4px;
+}
+.settings-section-head.danger .settings-section-title {
+  color: var(--danger);
+  text-shadow: 0 0 18px rgba(255,122,141,0.35);
+}
+.settings-section-hint {
+  font-family: var(--f-ui);
+  font-size: 13px;
+  color: var(--ink-dim);
+  line-height: 1.5;
+}
+
+/* Field grid */
+.settings-field-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 14px 22px;
+}
+.settings-field-grid-half {
+  grid-template-columns: repeat(auto-fit, minmax(220px, 280px));
+  margin-top: 14px;
+}
+
+.settings-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+.settings-field-label {
+  font-family: var(--f-display);
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--bubblegum);
+}
+.settings-field-hint {
+  font-family: var(--f-ui);
+  font-size: 11px;
+  color: var(--ink-faint);
+  line-height: 1.45;
+}
+
+.settings-field input[type="text"],
+.settings-field input[type="number"],
+.settings-field select,
+.settings-suffix > input {
+  width: 100%;
+  background: rgba(0,0,0,0.32);
+  border: 1px solid rgba(255,193,220,0.22);
+  color: var(--cream);
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-family: var(--f-mono);
+  font-size: 13px;
+  outline: none;
+  transition: border-color 120ms ease, box-shadow 120ms ease;
+}
+.settings-field input:hover,
+.settings-field select:hover {
+  border-color: rgba(255,193,220,0.38);
+}
+.settings-field input:focus,
+.settings-field select:focus {
+  border-color: var(--pink);
+  box-shadow: 0 0 0 3px rgba(255,94,167,0.16);
+}
+
+.settings-suffix {
+  display: flex;
+  align-items: stretch;
+  gap: 0;
+}
+.settings-suffix > input { border-top-right-radius: 0; border-bottom-right-radius: 0; }
+.settings-suffix > span {
+  display: flex;
+  align-items: center;
+  padding: 0 14px;
+  font-family: var(--f-mono);
+  font-size: 12px;
+  color: var(--ink-faint);
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,193,220,0.22);
+  border-left: none;
+  border-top-right-radius: 8px;
+  border-bottom-right-radius: 8px;
+}
+
+/* Toggle row (model switches, data toggles) */
+.settings-toggle-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.settings-toggle {
+  display: grid;
+  grid-template-columns: 38px 1fr;
+  gap: 14px;
+  align-items: start;
+  padding: 12px 12px;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background 120ms ease;
+}
+.settings-toggle:hover { background: rgba(255,193,220,0.04); }
+.settings-toggle input {
+  position: absolute;
+  opacity: 0;
+  width: 0; height: 0;
+  pointer-events: none;
+}
+.settings-toggle-switch {
+  position: relative;
+  width: 38px;
+  height: 22px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,193,220,0.2);
+  transition: background 140ms ease, border-color 140ms ease;
+  margin-top: 2px;
+}
+.settings-toggle-knob {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--ink-faint);
+  transition: left 140ms cubic-bezier(0.4, 1.4, 0.4, 1), background 140ms ease;
+}
+.settings-toggle.on .settings-toggle-switch {
+  background: linear-gradient(135deg, rgba(255,94,167,0.55), rgba(202,166,255,0.5));
+  border-color: rgba(255,193,220,0.6);
+}
+.settings-toggle.on .settings-toggle-knob {
+  left: 18px;
+  background: var(--cream);
+  box-shadow: 0 0 10px rgba(255,193,220,0.5);
+}
+.settings-toggle-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.settings-toggle-label {
+  font-family: var(--f-display);
+  font-size: 13px;
+  color: var(--cream);
+  letter-spacing: 0.04em;
+}
+.settings-toggle-hint {
+  font-family: var(--f-ui);
+  font-size: 11.5px;
+  color: var(--ink-dim);
+  line-height: 1.5;
+}
+
+/* Car list inside the Garage section */
+.settings-car-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.settings-car-row {
+  display: grid;
+  grid-template-columns: 36px 1fr auto;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 14px;
+  border: 1px solid rgba(255,193,220,0.14);
+  background: rgba(255,255,255,0.02);
+  border-radius: 10px;
+}
+.settings-car-mono {
+  width: 36px; height: 32px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, var(--lilac), var(--pink));
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--f-display); font-weight: 800; font-size: 14px;
+  color: #fff;
+  box-shadow: 0 0 14px -4px rgba(255,94,167,0.5);
+}
+.settings-car-main { min-width: 0; }
+.settings-car-name {
+  font-family: var(--f-display);
+  font-size: 14px;
+  color: var(--cream);
+  letter-spacing: 0.02em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.settings-car-meta {
+  font-family: var(--f-mono);
+  font-size: 11px;
+  color: var(--ink-faint);
+  margin-top: 2px;
+}
+
+/* Danger row */
+.settings-danger-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 22px;
+  padding: 18px 20px;
+  background: rgba(255,94,167,0.05);
+  border: 1px solid rgba(255,94,167,0.32);
+  border-radius: 12px;
+}
+.settings-danger-text { min-width: 0; }
+.settings-danger-label {
+  font-family: var(--f-display);
+  font-size: 14px;
+  color: var(--cream);
+  margin-bottom: 4px;
+}
+.settings-danger-hint {
+  font-family: var(--f-ui);
+  font-size: 12px;
+  color: var(--ink-dim);
+  line-height: 1.5;
+}
+
+.settings-empty {
+  font-family: var(--f-mono);
+  font-size: 12px;
+  color: var(--ink-faint);
+  padding: 14px;
+  text-align: center;
+  border: 1px dashed rgba(255,193,220,0.2);
+  border-radius: 10px;
+}
+
+.settings-foot-spacer { height: 60px; }
+
+.settings-loading,
+.settings-error {
+  padding: 60px 26px;
+  font-family: var(--f-mono);
+  color: var(--ink-dim);
+  font-size: 13px;
+}
+.settings-error-title {
+  font-family: var(--f-display);
+  font-size: 16px;
+  color: var(--danger);
+  margin-bottom: 8px;
+}
+.settings-error-msg {
+  margin-bottom: 14px;
+  color: var(--ink-faint);
+}
+
+/* WidgetSurface (CSS grid shell + editing-mode overlay + empty state)
+   migrated to Tailwind utilities in WidgetSurface.tsx. The widget
+   ghost placeholder below is still used by DashWindow's drag layer. */
+
+/* DashWindow (grid-positioned widget shell + drag/resize grips + size
+   picker submenu + ghost drag placeholder) migrated to Tailwind utilities
+   in DashWindow.tsx. The `.dash-window` className is retained on the
+   outer wrapper only as a marker (no CSS rules reference it now); it can
+   be removed when the EditPalette/sandbox-only descendants migrate. */
+
+/* Widget toolbar buttons (.dash-toolbar-btn family) and dropdown menus
+   (.dash-toolbar-menu family) migrated to Tailwind utilities via the
+   shared toolbarStyles.ts module (TOOLBAR_BTN, TOOLBAR_MENU, …). The
+   `.dash-toolbar-menu` className is kept on the portal-mounted menus
+   in EditPalette.tsx as a marker — the click-outside handler queries
+   `document.querySelectorAll('.dash-toolbar-menu')` to know which DOM
+   nodes count as "inside the toolbar". */
+
+/* Sidebar (off-canvas) + tabs migrated to Tailwind utilities in
+   Sidebar.tsx and SidebarTabs.tsx. */
+
+/* Floating edit palette migrated to Tailwind utilities in EditPalette.tsx.
+   Reduced-motion (previously the @media block touching .edit-palette and
+   .edit-palette.entering) is handled inline via Tailwind's
+   `motion-reduce:transition-none motion-reduce:opacity-100`. */
+
+/* ------------ top-bar tab label ------------ */
+/* `.top-bar-tab-label` (+ `::before` separator dot) and `.hamburger`
+   migrated to Tailwind utilities inline in AppHeader.tsx. */
+
+/* Reduced motion: disable all redesign transitions */
+/* Sidebar/backdrop + EditPalette reduced-motion handled inline via
+   Tailwind `motion-reduce:transition-none` + `motion-reduce:opacity-100`. */
+
+/* Size picker submenu migrated to Tailwind utilities in DashWindow.tsx. */
+
+
+/* Generic canvas style — used by any widget that draws to its own canvas
+   via useCanvas. Stretches to the dash-window-body and gets the same
+   pearlescent surface treatment as cards. */
+.widget-canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: 8px;
+  background: rgba(0,0,0,0.08);
+}
+
+/* speed_dial gets a slightly richer backdrop — radial pink wash + the
+   shared inner shadow that other dial widgets will share. */
+.widget-canvas.speed-dial {
+  box-shadow: inset 0 0 60px -20px rgba(255,193,220,0.15);
+}
+
+/* rpm_dial mirrors speed_dial but with a lilac wash dominant — visually
+   pairs the two cluster gauges while keeping them distinguishable. */
+.widget-canvas.rpm-dial {
+  box-shadow: inset 0 0 60px -20px rgba(202,166,255,0.15);
+}
+
+/* rpm_tape leans horizontal — broader gradient wash, slightly cooler
+   to read at-a-glance below a speed dial. */
+.widget-canvas.rpm-tape {
+  box-shadow: inset 0 0 60px -20px rgba(255,193,220,0.15);
+}
+
+
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-thumb {
+  background: rgba(212,186,255,0.2);
+  border-radius: 999px;
+}
+
+/* ============================================================ */
+/* World map widget — Leaflet-scoped rules only.                 */
+/* `.world-map` (root marker) lets these rules target Leaflet    */
+/* DOM that lives outside React's render tree. The React-rendered*/
+/* overlays/toolbars/panels are Tailwind-styled.                 */
+/* ============================================================ */
+
+.world-map .leaflet-container {
+  background: var(--bg-1);
+  font: inherit;
+}
+.world-map .leaflet-control-zoom a {
+  background: rgba(36, 14, 56, 0.85);
+  color: var(--ink);
+  border: 1px solid rgba(255, 193, 220, 0.18);
+  backdrop-filter: blur(8px);
+}
+.world-map .leaflet-control-zoom a:hover {
+  background: rgba(58, 24, 80, 0.95);
+  color: var(--cream);
+  border-color: rgba(255, 193, 220, 0.40);
+}
+.world-map .leaflet-control-zoom-in  { border-radius: 8px 8px 0 0; }
+.world-map .leaflet-control-zoom-out { border-radius: 0 0 8px 8px; }
+
+/* Player arrow (Leaflet divIcon).  The wrap div carries the heading
+   rotation so we never recreate the icon. */
+.world-map-arrow,
+.world-map-arrow .world-map-arrow-wrap {
+  background: none;
+  border: none;
+}
+.world-map-arrow-wrap {
+  width: 100%; height: 100%;
+  display: flex; align-items: center; justify-content: center;
+  transform-origin: 50% 50%;
+  transition: opacity 200ms ease;
+  filter: drop-shadow(0 0 6px rgba(255, 94, 167, 0.55));
+}
+
+/* Prediction overlays drawn via Leaflet's SVG layer. */
+.world-map .world-map-predict    { filter: drop-shadow(0 0 4px rgba(168, 243, 208, 0.55)); }
+.world-map .world-map-brake      { filter: drop-shadow(0 0 4px rgba(255, 224, 130, 0.65)); }
+.world-map .world-map-brake-mark { filter: drop-shadow(0 0 6px rgba(255, 224, 130, 0.80)); }
+
+/* Dim the tile pane only — marker / overlay panes stay full-brightness. */
+.world-map .leaflet-tile-pane {
+  filter: brightness(0.62) saturate(0.85) contrast(1.05);
+}
+
+/* 3D follow-cam tilts the whole .leaflet-container; hide the built-in
+   zoom controls (camera is locked to the car) and let our outer
+   `.world-map` overflow:hidden clip past the transformed bounds. */
+.world-map.mode-3d .leaflet-control-container { display: none; }
+.world-map.mode-3d .leaflet-container         { overflow: visible; }
+
+/* ------------ coach_feed widget ------------ */
+
+/* CoachFeed scrollbar skin — vendor pseudo-elements Tailwind can't express.
+   The .coach-list marker class is kept on the React element. */
+.coach-list::-webkit-scrollbar { width: 3px; }
+.coach-list::-webkit-scrollbar-track { background: transparent; }
+.coach-list::-webkit-scrollbar-thumb {
+  background: rgba(202,166,255,0.25); border-radius: 999px;
+}
+
+/* ------------ grip_budget widget ------------ */
+
+/* Wrapper holds the canvas + an absolutely-positioned percent overlay.
+   The canvas paints the arc + (hero) per-corner bars; the DOM overlay
+   shows the big centre number so we get crisp text at any DPR without
+   re-laying-out on every frame (canvas draw fn updates textContent
+   directly via ref). */
+/* tire_heatmap — pure canvas widget. The canvas paints every cell,
+   label, percent, and (when wear is real) wear bar. Body inherits the
+   shell's pearlescent surface; the canvas already pulls in the shared
+   `.widget-canvas` background. */
+
+/* gear_display — big single character (gear number / R). DOM-only,
+   no canvas. Each tier reveals one additional element:
+     compact  — gear letter alone
+     standard — + drivetrain badge (FWD | RWD | AWD)
+     hero     — + clutch indicator pill, with shift-flash on gear change
+   Shift flash is driven by `data-shift="up"|"down"` set from the
+   frame loop; CSS transitions ease the colour change away once the
+   attribute is removed (~250 ms later). */
+/* GearDisplay shift-flash: data-shift on the wrapper drives BigNumber's inner class.
+   Keyframes live in tailwind.config.theme.extend.keyframes. */
+.widget-gear[data-shift="up"]   .big-number-value { animation: shiftFlashUp   220ms ease-out; }
+.widget-gear[data-shift="down"] .big-number-value { animation: shiftFlashDown 220ms ease-out; }
+
+/* pedals — pure canvas widget. The canvas paints bars, labels,
+   percent readouts, and the handbrake LED. Body inherits the shell's
+   pearlescent surface. */
+
+
+
+/* LapTable rows scrollbar — vendor pseudo Tailwind can't express. `.lt2-rows` marker. */
+.lt2-rows::-webkit-scrollbar { width: 4px; }
+.lt2-rows::-webkit-scrollbar-thumb {
+  background: rgba(202,166,255,0.2); border-radius: 2px;
+}
+
+/* ── widgetPrimitives ─────────────────────────────────────────── */
+
+.metric-label {
+  font-family: var(--f-display);
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.metric-label .dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--pink);
+  box-shadow: 0 0 6px var(--pink);
+  flex: 0 0 6px;
+}
+
+.big-number {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  --big-num-glow: var(--cream);
+}
+.big-number-value {
+  font-family: var(--f-display);
+  font-weight: 700;
+  color: var(--cream);
+  letter-spacing: -0.01em;
+  line-height: 1;
+  text-shadow:
+    0 0 8px var(--big-num-glow),
+    0 0 18px color-mix(in srgb, var(--big-num-glow) 50%, transparent);
+  transition: text-shadow 90ms ease;
+}
+.big-number-unit {
+  font-family: var(--f-mono);
+  font-weight: 500;
+  color: var(--ink-faint);
+  margin-top: 6px;
+  letter-spacing: 0.04em;
+}
+
+.radial-gauge-wrap,
+.linear-gauge-wrap,
+.sparkline-wrap {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+.radial-gauge-wrap > canvas,
+.linear-gauge-wrap > canvas,
+.sparkline-wrap   > canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/* BoostGauge hero shifts the dial up to cy = ch * 0.42 so the sparkline
+   sits below. Shrink BigNumber's container so it centres on the dial
+   centre, not the wrap centre. */
+.boost-gauge-wrap .big-number.tier-hero {
+  bottom: 16%;
+  justify-content: center;
+  padding-top: 0;
+}
+
+/* GripBudget hero shifts the dial up by half of the corner-bar reserve
+   (50px) plus an 8px top offset (cy = (ch - 50) / 2 + 8). Mirror that
+   so BigNumber centres on the dial. */
+.grip-budget-wrap .big-number.tier-hero {
+  top: 8px;
+  bottom: 42px;
+  padding-bottom: 0;
+}
+
+.crash-risk-wrap .big-number {
+  justify-content: flex-start;
+}
+.crash-risk-wrap .big-number.tier-compact  { padding-top: 8%; }
+.crash-risk-wrap .big-number.tier-standard { padding-top: 28%; }
+.crash-risk-wrap .big-number.tier-hero     { padding-top: 22%; }
+
+/* GearDisplay puts BigNumber back into flex flow so dots/dt/clutch don't
+   overlap. The other gauge widgets keep BigNumber as a full-wrap overlay. */
+.widget-gear .big-number {
+  position: relative;
+  inset: auto;
+  width: auto;
+  flex: 0 0 auto;
+}
+
+.confetti-burst {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 5;
+}
+
+/* GMeter: BigNumber sits at the bottom of the wrap, just above the LAT/LON
+   caption line. The dot + crosshair + circles fill the upper area. */
+.g-meter-wrap .big-number {
+  justify-content: flex-end;
+  padding-bottom: 14%;
+}
+.g-meter-wrap .big-number.tier-hero {
+  padding-bottom: 18%;
+}
+
+/* ── Widget Sandbox ───────────────────────────────────────────── */
+
+.widget-sandbox {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-0);
+  z-index: 100;
+}
+.sb-topbar {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 12px 18px;
+  border-bottom: 1px solid rgba(255,193,220,0.15);
+  background: rgba(13,5,32,0.7);
+}
+.sb-field {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--f-display);
+  font-size: 12px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+.sb-field select {
+  background: rgba(255,193,220,0.06);
+  border: 1px solid rgba(255,193,220,0.2);
+  color: var(--ink);
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-family: var(--f-mono);
+  font-size: 12px;
+  letter-spacing: 0;
+  text-transform: none;
+  min-width: 280px;
+}
+.sb-field-label {
+  font-family: var(--f-display);
+  font-size: 12px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+.sb-size-group { display: flex; align-items: center; gap: 6px; }
+.sb-size-btn {
+  background: rgba(255,193,220,0.04);
+  border: 1px solid rgba(255,193,220,0.18);
+  color: var(--ink);
+  font-family: var(--f-display);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  padding: 6px 12px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: all 120ms ease;
+}
+.sb-size-btn:hover { background: rgba(255,193,220,0.10); }
+.sb-size-btn.active {
+  background: linear-gradient(135deg, var(--pink), var(--lilac));
+  color: #0d0520;
+  border-color: transparent;
+}
+.sb-stale {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--f-display);
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  cursor: pointer;
+}
+.sb-body { display: flex; flex: 1; min-height: 0; }
+.sb-panel {
+  width: 320px;
+  border-right: 1px solid rgba(255,193,220,0.12);
+  padding: 14px;
+  overflow-y: auto;
+  background: rgba(13,5,32,0.5);
+}
+.sb-notes {
+  font-family: var(--f-ui);
+  font-size: 12px;
+  color: var(--butter);
+  background: rgba(255,224,130,0.08);
+  border: 1px solid rgba(255,224,130,0.18);
+  border-radius: 6px;
+  padding: 10px 12px;
+  margin-bottom: 14px;
+  line-height: 1.5;
+}
+.sb-section { margin-bottom: 18px; }
+.sb-section-title {
+  font-family: var(--f-display);
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  margin-bottom: 8px;
+}
+.sb-presets { display: flex; flex-wrap: wrap; gap: 6px; }
+.sb-preset {
+  background: rgba(202,166,255,0.08);
+  border: 1px solid rgba(202,166,255,0.22);
+  color: var(--ink);
+  font-family: var(--f-display);
+  font-size: 11px;
+  letter-spacing: 0.10em;
+  padding: 6px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+.sb-preset:hover { background: rgba(202,166,255,0.18); }
+.sb-preset-reset { background: rgba(168,243,208,0.06); border-color: rgba(168,243,208,0.20); }
+
+.sb-field-row { margin-bottom: 12px; }
+.sb-field-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 4px;
+}
+.sb-field-name {
+  font-family: var(--f-display);
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+}
+.sb-field-val {
+  font-family: var(--f-mono);
+  font-size: 11px;
+  color: var(--cream);
+}
+.sb-field-controls { display: flex; align-items: center; gap: 8px; }
+.sb-field-controls input[type="range"] { flex: 1; accent-color: var(--pink); }
+.sb-field-controls input[type="range"]:disabled { opacity: 0.4; }
+.sb-animate {
+  display: inline-flex; align-items: center; gap: 4px;
+  font-family: var(--f-display);
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  cursor: pointer;
+}
+
+.sb-stage {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 32px;
+  overflow: auto;
+}
+.sb-stage-meta {
+  font-family: var(--f-mono);
+  font-size: 11px;
+  color: var(--ink-faint);
+  margin-bottom: 12px;
+}
+.sb-widget-frame {
+  position: relative;
+  border-radius: 10px;
+  background: var(--card-bg, rgba(255,255,255,0.02));
+  border: 1px solid rgba(255,193,220,0.18);
+  box-shadow: 0 0 24px rgba(202,166,255,0.10);
+  overflow: hidden;
+}
+
+.sb-widget-select { min-width: 280px; }
+

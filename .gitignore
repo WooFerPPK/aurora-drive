@@ -1,0 +1,39 @@
+# Dependencies
+node_modules/
+.venv/
+.pnpm-store/
+
+# Build output
+dist/
+build/
+
+# Python caches
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+__pycache__/
+*.pyc
+
+# Local env / secrets
+.env
+.env.local
+*.local
+
+# Editor / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Claude / Superpowers / AI tooling
+CLAUDE.md
+AGENTS.md
+GEMINI.md
+.claude/
+.specify/
+
+# Internal planning + design docs (not for public consumption)
+docs/
+specs/
+DOCS.md
+forza-horizon-telemetry-research.md

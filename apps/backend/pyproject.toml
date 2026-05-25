@@ -1,0 +1,114 @@
+[project]
+name = "fh6-telemetry-backend"
+version = "0.1.0"
+description = "Local-first Forza Horizon 6 telemetry backend"
+requires-python = ">=3.12"
+readme = "README.md"
+license = { text = "Proprietary" }
+
+dependencies = [
+    "fastapi>=0.115",
+    "uvicorn[standard]>=0.32",
+    "pydantic>=2.9",
+    "pydantic-settings>=2.6",
+    "sqlalchemy[asyncio]>=2.0.35",
+    "asyncpg>=0.30",
+    "alembic>=1.13",
+    "numpy>=2.1",
+    "scipy>=1.14",
+    "structlog>=24.4",
+    "redis>=5.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.3",
+    "pytest-asyncio>=0.24",
+    "pytest-cov>=5.0",
+    "ruff>=0.7",
+    "mypy>=1.13",
+    "types-setuptools",
+    "pre-commit>=4.0",
+    # starlette.testclient is a thin wrapper over httpx — it lives in tests
+    # only, so the dep belongs in [project.optional-dependencies] dev rather
+    # than production. The plan flagged httpx as "unused" in app code; the
+    # test plumbing still needs it.
+    "httpx>=0.27",
+]
+
+[project.scripts]
+fh6 = "fh6.main:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/fh6"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM", "RUF", "ASYNC", "PL"]
+ignore = [
+    "PLR0911",  # too-many-return-statements — state-machine branching is acceptable
+    "PLR0912",  # too-many-branches — same
+    "PLR0913",  # too-many-arguments — many ports have wide constructors by design
+    "PLR0915",  # too-many-statements — same
+    "PLR2004",  # magic-value-comparison — overkill for sentinel literals in tests
+    "RUF002",  # ambiguous-unicode-char-docstring — × / – are intentional in math/narrative
+    "RUF003",  # ambiguous-unicode-char-comment — same
+    "E501",
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = [
+    "PLR2004",  # magic-value
+    "B011",  # assert False
+    "PLC0415",  # local-import — tests rebind dependencies per-fixture
+    "B007",  # loop control variable — `for _ in range(N)` style varies
+    "F841",  # unused local — readability bindings in arrange/act/assert
+    "E741",  # ambiguous variable name (`l` for lap shadows builtin l ambiguity)
+    "PLW0108",  # lambda thin wrapper — preserves callable signature in fixtures
+    "PLR1714",  # in-set comparison rewrite — verbose chained `or` is clearer in tests
+    "RUF046",  # unnecessary cast — keeps numeric intent explicit
+    "RUF059",  # unused unpacked — `_predictor, *_` shows intent
+    "SIM117",  # nested with — test setup readability over concision
+    "B017",  # broad assertRaises — boundary tests intentionally check `Exception`
+    "B905",  # zip strict=True — pairwise compare in tests has equal-length invariant
+]
+"src/fh6/infrastructure/db/migrations/**" = ["E", "F"]
+
+[tool.ruff.lint.flake8-bugbear]
+# FastAPI dependency-injection markers are evaluated at route-registration
+# time; they're safe (and idiomatic) in default-argument position.
+extend-immutable-calls = [
+    "fastapi.Body",
+    "fastapi.Cookie",
+    "fastapi.Depends",
+    "fastapi.File",
+    "fastapi.Form",
+    "fastapi.Header",
+    "fastapi.Path",
+    "fastapi.Query",
+]
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+namespace_packages = true
+mypy_path = "src"
+plugins = ["pydantic.mypy"]
+
+[[tool.mypy.overrides]]
+module = ["asyncpg.*", "scipy.*"]
+ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"
+addopts = "-ra -q"
+pythonpath = ["src"]

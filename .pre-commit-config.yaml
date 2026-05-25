@@ -1,0 +1,46 @@
+# Backend hooks only for now. Web hooks land in Phase 4 (TypeScript bootstrap).
+#
+# Activation is opt-in — `make pre-commit.install` (or `pre-commit install`
+# from the repo root) wires it into .git/hooks/pre-commit. The config is
+# committed but the hook is not auto-installed.
+#
+# Hooks run on staged files by default, so existing lint/mypy debt on main
+# (sub-PR 2m's cleanup target) does NOT surface during normal commits.
+# `pre-commit run --all-files` will surface that debt — that's the
+# pre-flight check before activating a CI runner.
+
+default_install_hook_types: [pre-commit]
+default_stages: [pre-commit]
+
+repos:
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.15.13
+    hooks:
+      - id: ruff
+        name: ruff (lint, --fix)
+        args: [--fix]
+        files: ^apps/backend/(src|tests)/.*\.py$
+      - id: ruff-format
+        name: ruff (format)
+        files: ^apps/backend/(src|tests)/.*\.py$
+
+  - repo: local
+    hooks:
+      - id: mypy
+        name: mypy (strict, via uv)
+        # Run inside the backend project so uv resolves the right venv.
+        # Passing all staged files at once keeps mypy's incremental cache hot.
+        entry: bash -c 'cd apps/backend && uv run mypy src/fh6'
+        language: system
+        pass_filenames: false
+        files: ^apps/backend/(src|tests)/.*\.py$
+        require_serial: true
+
+      - id: forbid-stdlib-logging
+        name: forbid stdlib logging (use structlog via fh6.infrastructure.logging)
+        # Implementation lives in scripts/check_no_stdlib_logging.py so the
+        # logic is readable, testable, and not subject to YAML quoting hazards.
+        entry: python scripts/check_no_stdlib_logging.py
+        language: system
+        files: ^apps/backend/src/fh6/.*\.py$
+        exclude: ^apps/backend/src/fh6/(infrastructure/logging\.py|infrastructure/db/migrations/env\.py)$

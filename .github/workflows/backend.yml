@@ -1,0 +1,67 @@
+# Intentionally inert: no runner is wired up yet, and lint+mypy debt on main
+# would currently fail. Sub-PR 2m clears that debt before a runner activates;
+# 2b–2l also naturally chip away at it. See /opt/fh6-racer-refactor-plan.md.
+
+name: backend
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'apps/backend/**'
+      - 'packages/contract/**'
+      - '.github/workflows/backend.yml'
+  pull_request:
+    paths:
+      - 'apps/backend/**'
+      - 'packages/contract/**'
+      - '.github/workflows/backend.yml'
+
+concurrency:
+  group: backend-${{ github.ref }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    working-directory: apps/backend
+
+jobs:
+  check:
+    name: lint + typecheck + test
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v3
+        with:
+          enable-cache: true
+          cache-dependency-glob: 'apps/backend/uv.lock'
+
+      - name: Pin Python 3.12
+        run: uv python install 3.12
+
+      - name: Sync deps (incl. dev extras)
+        run: uv sync --extra dev --frozen
+
+      - name: Ruff lint
+        run: uv run ruff check src tests
+
+      - name: Ruff format check
+        run: uv run ruff format --check src tests
+
+      - name: Mypy (strict)
+        run: uv run mypy src/fh6
+
+      - name: Pytest (coverage tracked, gate disabled until ≥80%)
+        run: uv run pytest --cov=fh6 --cov-report=term-missing
+
+      # Codegen drift gate (Phase 3). Regenerates packages/contract/openapi.json
+      # and ws.schema.json from the live backend and diffs against the committed
+      # copies. Fails the build if anyone forgot to `make codegen` after
+      # adding/changing a route or WS schema. `make codegen.check` runs from
+      # the repo root because it shells back out into apps/backend itself.
+      - name: Codegen drift check
+        working-directory: ${{ github.workspace }}
+        run: make codegen.check

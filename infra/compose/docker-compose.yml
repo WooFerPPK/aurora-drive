@@ -1,0 +1,41 @@
+# Dev infra for fh-racer.
+# Backend + web run natively (uv / pnpm) — only data services live in compose.
+# Bind to 127.0.0.1 only; the app is single-driver, loopback-only.
+
+services:
+  postgres:
+    image: timescale/timescaledb-ha:pg16
+    environment:
+      POSTGRES_USER: fh6
+      POSTGRES_PASSWORD: fh6
+      POSTGRES_DB: fh6
+    ports:
+      - "127.0.0.1:5432:5432"
+    volumes:
+      - fh-racer-pgdata:/home/postgres/pgdata/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U fh6 -d fh6"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  # Redis-backed WS broker + HotCache mirror (Phase 9).
+  # Brought up by `make db.up`; backend uses it only when FH6_REDIS_URL is set
+  # (e.g. `redis://127.0.0.1:6379/0`). Single-worker dev keeps working without
+  # Redis via the in-process broker fallback.
+  redis:
+    image: redis:7-alpine
+    command: ["redis-server", "--appendonly", "yes"]
+    ports:
+      - "127.0.0.1:6379:6379"
+    volumes:
+      - fh-racer-redisdata:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+volumes:
+  fh-racer-pgdata:
+  fh-racer-redisdata:
