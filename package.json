@@ -1,0 +1,11 @@
+{
+  "name": "fh-racer",
+  "private": true,
+  "version": "0.0.0",
+  "description": "FH Racer combined package — backend (apps/backend) + web (apps/web) + contract (packages/contract).",
+  "engines": {
+    "node": ">=22.13",
+    "pnpm": ">=11"
+  },
+  "packageManager": "pnpm@11.3.0"
+}

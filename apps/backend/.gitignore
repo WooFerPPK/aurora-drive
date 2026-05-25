@@ -1,0 +1,51 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+*.egg
+.venv/
+venv/
+env/
+.tox/
+
+# Build
+build/
+dist/
+*.so
+
+# Test / coverage
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+.hypothesis/
+.mypy_cache/
+.ruff_cache/
+
+# IDE / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+*.swp
+*.tmp
+
+# Env
+.env
+.env.local
+.env.*.local
+
+# uv
+.uv-cache/
+
+# Project-local
+*.log
+fh6.db
+data/
+
+forza/
+# Worktrees
+.worktrees/

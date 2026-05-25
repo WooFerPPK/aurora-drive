@@ -1,0 +1,96 @@
+# Runs the Playwright smoke suite against `make dev` (backend + vite + UDP
+# pump). The backend needs Postgres + TimescaleDB (the alembic upgrade is
+# the first step's `CREATE EXTENSION IF NOT EXISTS timescaledb` call).
+# Redis is intentionally omitted — backends with FH6_REDIS_URL unset fall
+# back to InProcessBroker, which is fine for the three smoke specs.
+
+name: e2e
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'apps/web/**'
+      - 'apps/backend/**'
+      - 'packages/contract/**'
+      - '.github/workflows/e2e.yml'
+  pull_request:
+    paths:
+      - 'apps/web/**'
+      - 'apps/backend/**'
+      - 'packages/contract/**'
+      - '.github/workflows/e2e.yml'
+
+concurrency:
+  group: e2e-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  playwright:
+    name: playwright smoke
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    services:
+      postgres:
+        image: timescale/timescaledb:latest-pg17
+        env:
+          POSTGRES_USER: fh6
+          POSTGRES_PASSWORD: fh6
+          POSTGRES_DB: fh6
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U fh6 -d fh6"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 12
+    env:
+      CI: 'true'
+      FH6_DB_DSN: postgresql+asyncpg://fh6:fh6@127.0.0.1:5432/fh6
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v3
+        with:
+          enable-cache: true
+          cache-dependency-glob: 'apps/backend/uv.lock'
+
+      - name: Pin Python 3.12
+        run: uv python install 3.12
+
+      - name: Sync backend deps (incl. dev extras)
+        working-directory: apps/backend
+        run: uv sync --extra dev --frozen
+
+      - name: Apply migrations
+        working-directory: apps/backend
+        run: uv run alembic -c src/fh6/infrastructure/db/migrations/alembic.ini upgrade head
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          run_install: false
+
+      - name: Install web deps
+        run: pnpm install --frozen-lockfile
+
+      - name: Install Playwright browsers
+        working-directory: apps/web/client
+        run: pnpm exec playwright install --with-deps chromium
+
+      - name: Run e2e
+        run: make e2e
+
+      - name: Upload Playwright report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: apps/web/client/playwright-report/
+          retention-days: 7

@@ -1,0 +1,44 @@
+{
+  "name": "@fh-racer/contract",
+  "version": "0.0.1",
+  "private": true,
+  "description": "Generated TypeScript types for the fh-racer backend REST + WebSocket contracts. Do not edit src/ by hand — run `make codegen` from the repo root.",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./api": {
+      "types": "./dist/api.d.ts",
+      "import": "./dist/api.js"
+    },
+    "./ws": {
+      "types": "./dist/ws.d.ts",
+      "import": "./dist/ws.js"
+    },
+    "./openapi.json": "./openapi.json",
+    "./ws.schema.json": "./ws.schema.json"
+  },
+  "files": [
+    "dist",
+    "src",
+    "openapi.json",
+    "ws.schema.json"
+  ],
+  "scripts": {
+    "generate:api": "openapi-typescript openapi.json --output src/api.ts",
+    "generate:ws": "json2ts --unreachableDefinitions --input ws.schema.json --output src/ws.ts",
+    "generate": "pnpm run generate:api && pnpm run generate:ws",
+    "build": "pnpm run generate && tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "clean": "rm -rf dist"
+  },
+  "devDependencies": {
+    "json-schema-to-typescript": "^15.0.4",
+    "openapi-typescript": "^7.6.1",
+    "typescript": "^5.7.2"
+  }
+}
