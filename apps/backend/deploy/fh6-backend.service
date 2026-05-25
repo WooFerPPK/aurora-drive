@@ -1,0 +1,23 @@
+[Unit]
+Description=FH Racer Telemetry Backend
+After=network.target postgresql.service
+Requires=postgresql.service
+StartLimitBurst=3
+StartLimitIntervalSec=600
+
+[Service]
+Type=simple
+User=fh6
+Group=fh6
+WorkingDirectory=/opt/fh-racer/apps/backend
+Environment=HOME=/home/fh6
+EnvironmentFile=/etc/fh6.env
+ExecStartPre=/opt/fh-racer/apps/backend/.venv/bin/alembic \
+    -c /opt/fh-racer/apps/backend/src/fh6/infrastructure/db/migrations/alembic.ini \
+    upgrade head
+ExecStart=/opt/fh-racer/apps/backend/.venv/bin/python -m fh6.main
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

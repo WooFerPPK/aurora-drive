@@ -1,0 +1,14 @@
+.DS_Store
+Thumbs.db
+*.log
+.env
+.env.*
+!.env.example
+
+# Design handoff lives on disk only; not tracked in git.
+forza-racer-design-handoff/
+Forza/
+
+# Local tool state (Claude harness / superpowers plugin)
+.claude/
+.superpowers/

@@ -1,0 +1,125 @@
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  /* surfaces */
+  --bg-0:   #1a0826;
+  --bg-1:   #2a0e3a;
+  --bg-2:   #3a1850;
+  --bg-grad:
+    radial-gradient(ellipse at 18% 12%, rgba(255,180,220,0.22) 0%, transparent 55%),
+    radial-gradient(ellipse at 82% 22%, rgba(202,166,255,0.18) 0%, transparent 55%),
+    radial-gradient(ellipse at 78% 88%, rgba(255,143,192,0.16) 0%, transparent 55%),
+    radial-gradient(ellipse at 22% 78%, rgba(168,243,208,0.06) 0%, transparent 55%),
+    linear-gradient(170deg, #1a0826 0%, #2a0e3a 60%, #3a1850 100%);
+
+  /* accents */
+  --lilac:       #caa6ff;
+  --pink:        #ff5ea7;
+  --bubblegum:   #ffc1dc;
+  --butter:      #ffe082;
+  --mint:        #a8f3d0;
+  --baby-blue:   #b8d4ff;
+  --amber:       #ffb84d;
+  --danger:      #ff7a8d;
+
+  /* text */
+  --cream:       #fff7f0;
+  --ink:         #fde9ff;
+  --ink-dim:     rgba(253,233,255,0.7);
+  --ink-faint:   rgba(253,233,255,0.42);
+
+  /* card */
+  --card-bg: linear-gradient(155deg,
+                rgba(255,255,255,0.12) 0%,
+                rgba(255,193,220,0.08) 30%,
+                rgba(202,166,255,0.08) 60%,
+                rgba(255,224,130,0.06) 100%);
+  --card-border: rgba(255,193,220,0.28);
+  --card-glow:
+    0 0 0 1px rgba(255,193,220,0.14) inset,
+    0 24px 50px -36px rgba(255,94,167,0.55),
+    0 0 30px -10px rgba(202,166,255,0.4);
+
+  /* fonts */
+  --f-display: 'Unbounded', 'Sora', system-ui, sans-serif;
+  --f-ui:      'Space Grotesk', system-ui, sans-serif;
+  --f-mono:    'JetBrains Mono', ui-monospace, monospace;
+
+  --header-h: 38px;
+  --sidebar-w: 280px;
+}
+
+/* Light theme: pearl-on-aurora. Surfaces stay pale lavender; cards lift
+   via pearl-white overlay; accents are shifted to darker variants so
+   they read against the light backdrop while preserving the status
+   semantics from the design guide (mint=good, amber=paused, pink=brand,
+   danger=destructive). */
+[data-theme="light"] {
+  --bg-0: #faf3f7;
+  --bg-1: #f0e4ee;
+  --bg-2: #e4d3e8;
+  --bg-grad:
+    radial-gradient(ellipse at 18% 12%, rgba(255,180,220,0.34) 0%, transparent 55%),
+    radial-gradient(ellipse at 82% 22%, rgba(202,166,255,0.28) 0%, transparent 55%),
+    radial-gradient(ellipse at 78% 88%, rgba(255,143,192,0.24) 0%, transparent 55%),
+    radial-gradient(ellipse at 22% 78%, rgba(168,243,208,0.16) 0%, transparent 55%),
+    linear-gradient(170deg, #faf3f7 0%, #f0e4ee 60%, #e4d3e8 100%);
+
+  /* Accents: deeper variants for legibility on pale bg.
+     Names + semantic uses unchanged so components don't move. */
+  --lilac:     #7b4cd8;
+  --pink:      #d63782;
+  --bubblegum: #c93f7a;
+  --butter:    #a87209;
+  --mint:      #138e5e;
+  --baby-blue: #2d5fc7;
+  --amber:     #c45b00;
+  --danger:    #d6304a;
+
+  /* Text inverts to dark purple. ink-dim/faint nudged a hair more
+     opaque than the dark-mode mirror so small captions still pass AA. */
+  --cream:     #1f0b32;
+  --ink:       #3a1850;
+  --ink-dim:   rgba(58,24,80,0.78);
+  --ink-faint: rgba(58,24,80,0.55);
+
+  /* Pearl-white card overlay so cards lift from the gradient.
+     Aurora hue tints follow the dark-mode order
+     (white → pink → lilac → butter). */
+  --card-bg: linear-gradient(155deg,
+                rgba(255,253,254,0.78) 0%,
+                rgba(255,236,245,0.74) 30%,
+                rgba(243,232,255,0.74) 60%,
+                rgba(255,247,228,0.70) 100%);
+  --card-border: rgba(168,40,108,0.32);
+  --card-glow:
+    0 0 0 1px rgba(255,255,255,0.55) inset,
+    0 24px 50px -36px rgba(168,40,108,0.38),
+    0 0 30px -10px rgba(123,76,216,0.24);
+}
+
+@media (min-width: 1440px) {
+  :root { --header-h: 42px; }
+}
+
+html, body {
+  background: var(--bg-0);
+  color: var(--ink);
+  font-family: var(--f-ui);
+  height: 100%;
+  overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+#root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-grad);
+  position: relative;
+  overflow: hidden;
+}

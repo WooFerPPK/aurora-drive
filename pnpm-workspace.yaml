@@ -1,0 +1,8 @@
+packages:
+  - 'apps/web/client'
+  - 'packages/contract'
+
+# pnpm 11+ blocks install scripts by default. Only the deps we actually trust
+# are listed here. esbuild fetches a native binary in its install hook.
+allowBuilds:
+  esbuild: true
